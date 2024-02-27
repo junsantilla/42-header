@@ -6,7 +6,7 @@ A standard 42 header that is required at the beginning of every source code you 
 
 ## Version
 
-Current version: 0.0.1
+Current version: 0.0.3
 
 ## Compatibility
 
