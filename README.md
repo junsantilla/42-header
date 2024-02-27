@@ -25,4 +25,4 @@ This extension provides a standard 42 header that is required at the beginning o
 
 ## Contributing
 
-Feel free to contribute by submitting issues or pull requests on the [GitHub repository](link_to_repository).
+Feel free to contribute by submitting issues or pull requests on the [GitHub repository](https://github.com/junsantilla/42-header).
