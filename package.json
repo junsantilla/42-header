@@ -1,0 +1,45 @@
+{
+	"name": "42-header",
+	"displayName": "42-header",
+	"description": "A standard 42 header that is required at the beginning of every source code you will write. \t",
+	"version": "0.0.1",
+	"icon": "42.png",
+	"engines": {
+		"vscode": "^1.86.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [],
+	"main": "./extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "42-header.insertComments",
+				"title": "Show Comments"
+			}
+		],
+		"keybindings": [
+			{
+				"command": "42-header.insertComments",
+				"key": "ctrl+alt+h",
+				"mac": "cmd+alt+h",
+				"when": "editorTextFocus"
+			}
+		]
+	},
+	"scripts": {
+		"lint": "eslint .",
+		"pretest": "npm run lint",
+		"test": "vscode-test"
+	},
+	"devDependencies": {
+		"@types/vscode": "^1.86.0",
+		"@types/mocha": "^10.0.6",
+		"@types/node": "18.x",
+		"eslint": "^8.56.0",
+		"typescript": "^5.3.3",
+		"@vscode/test-cli": "^0.0.6",
+		"@vscode/test-electron": "^2.3.9"
+	}
+}
