@@ -37,6 +37,33 @@ function activate(context) {
 		}
 	);
 	context.subscriptions.push(disposableChange);
+
+	// Prompt user for username and email after extension activation
+	vscode.window
+		.showInputBox({
+			prompt: "Enter your username (optional)",
+			placeHolder: "user",
+		})
+		.then((username) => {
+			if (username !== undefined) {
+				vscode.workspace
+					.getConfiguration()
+					.update("42header.username", username, true);
+			}
+		});
+
+	vscode.window
+		.showInputBox({
+			prompt: "Enter your email address (optional)",
+			placeHolder: "user@student.42.fr",
+		})
+		.then((email) => {
+			if (email !== undefined) {
+				vscode.workspace
+					.getConfiguration()
+					.update("42header.email", email, true);
+			}
+		});
 }
 
 function insertComments() {
@@ -59,12 +86,15 @@ function insertComments() {
 		.replace(/\..+/, "");
 
 	// Get the current username
-	const username =   vscode.workspace.getConfiguration()
-    .get('42header.username') || process.env['USER'] || 'user'
+	const username =
+		vscode.workspace.getConfiguration().get("42header.username") ||
+		process.env["USER"] ||
+		"user";
 
 	// Get the current user's email
-	const userEmail = vscode.workspace.getConfiguration()
-    .get('42header.email') || `${username}@student.42.fr`
+	const userEmail =
+		vscode.workspace.getConfiguration().get("42header.email") ||
+		`${username}@student.42.fr`;
 
 	// Calculate padding based on dynamic data
 	const fileNamePadding = calculatePadding(fileName, 43);
@@ -84,7 +114,7 @@ function insertComments() {
 				`/*   ${fileName}${fileNamePadding}        :+:      :+:    :+:   */\n` +
 				`/*                                                    +:+ +:+         +:+     */\n` +
 				`/*   By: ${username} <${userEmail}>${usernamePadding}${emailPadding} +#+  +:+       +#+        */\n` +
-				`/*                                                +#+#+#+#+#+   +#+           */\n`+
+				`/*                                                +#+#+#+#+#+   +#+           */\n` +
 				`/*   Created: ${currentDate} by ${username}${createdPadding} #+#    #+#             */\n` +
 				`/*   Updated: ${currentDate} by ${username}${updatedPadding} ###   ########.fr       */\n` +
 				`/*                                                                            */\n` +
