@@ -3,7 +3,7 @@
 	"displayName": "42-header",
 	"description": "A standard 42 header that is required at the beginning of every source code you will write. \t",
 	"publisher": "junsantilla",
-	"version": "0.0.3",
+	"version": "0.0.4",
 	"icon": "42.png",
 	"engines": {
 		"vscode": "^1.86.0"

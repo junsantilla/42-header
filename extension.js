@@ -1,6 +1,13 @@
 const vscode = require("vscode");
 const os = require("os");
 
+function calculatePadding(dynamicData, maxLength) {
+	const dynamicDataLength = dynamicData.length;
+	const paddingLength = Math.max(0, maxLength - dynamicDataLength);
+	const padding = " ".repeat(paddingLength);
+	return padding;
+}
+
 function activate(context) {
 	console.log('Congratulations, your extension "42-header" is now active!');
 
@@ -52,13 +59,21 @@ function insertComments() {
 		.replace(/\..+/, "");
 
 	// Get the current username
-	const username = os.userInfo().username;
+	const username =   vscode.workspace.getConfiguration()
+    .get('42header.username') || process.env['USER'] || 'user'
 
-	// Get the current user's email (assuming it is stored in the environment variable USER_EMAIL)
-	const userEmail = process.env.USER_EMAIL || "unknown@example.com";
+	// Get the current user's email
+	const userEmail = vscode.workspace.getConfiguration()
+    .get('42header.email') || `${username}@student.42.fr`
 
-	// Padding
-	const padding = "";
+	// Calculate padding based on dynamic data
+	const fileNamePadding = calculatePadding(fileName, 43);
+	const usernamePadding = calculatePadding(username, 8);
+	const emailPadding = calculatePadding(userEmail, 31); // Assuming maximum email length
+
+	// Calculate padding for Created and Updated lines
+	const createdPadding = calculatePadding(username, 17);
+	const updatedPadding = calculatePadding(username, 16);
 
 	editor.edit((editBuilder) => {
 		editBuilder.insert(
@@ -66,20 +81,12 @@ function insertComments() {
 			`/* ************************************************************************** */\n` +
 				`/*                                                                            */\n` +
 				`/*                                                        :::      ::::::::   */\n` +
-				`/*   ${fileName.padEnd(
-					43
-				)}        :+:      :+:    :+:   */\n` +
+				`/*   ${fileName}${fileNamePadding}        :+:      :+:    :+:   */\n` +
 				`/*                                                    +:+ +:+         +:+     */\n` +
-				`/*   By: ${username} <${userEmail}> ${padding.padEnd(
-					6
-				)}  +#+  +:+       +#+        */\n` +
-				`/*                                                +#+#+#+#+#+   +#+           */\n` +
-				`/*   Created: ${currentDate} by ${username.padEnd(
-					17
-				)} #+#    #+#             */\n` +
-				`/*   Updated: ${currentDate} by ${username.padEnd(
-					16
-				)} ###   ########.fr       */\n` +
+				`/*   By: ${username} <${userEmail}>${usernamePadding}${emailPadding} +#+  +:+       +#+        */\n` +
+				`/*                                                +#+#+#+#+#+   +#+           */\n`+
+				`/*   Created: ${currentDate} by ${username}${createdPadding} #+#    #+#             */\n` +
+				`/*   Updated: ${currentDate} by ${username}${updatedPadding} ###   ########.fr       */\n` +
 				`/*                                                                            */\n` +
 				`/* ************************************************************************** */\n`
 		);
@@ -109,15 +116,16 @@ function updateUpdatedDate() {
 			editor.document.getText().indexOf(updatedLine)
 		);
 
+		// Calculate padding based on dynamic data
+		const usernamePadding = calculatePadding(username, 16);
+
 		editor.edit((editBuilder) => {
 			editBuilder.replace(
 				new vscode.Range(
 					updatedPosition,
 					updatedPosition.translate(0, updatedLine.length)
 				),
-				`/*   Updated: ${currentDate} by ${username.padEnd(
-					16
-				)} ###   ########.fr       */`
+				`/*   Updated: ${currentDate} by ${username}${usernamePadding} ###   ########.fr       */`
 			);
 		});
 	}
