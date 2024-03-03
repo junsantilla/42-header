@@ -11,6 +11,46 @@ function calculatePadding(dynamicData, maxLength) {
 function activate(context) {
 	console.log('Congratulations, your extension "42-header" is now active!');
 
+	// Prompt user for username, email, and custom domain after extension activation
+	vscode.window
+		.showInputBox({
+			prompt: "Enter your username (optional)",
+			placeHolder: "user",
+		})
+		.then((username) => {
+			if (username !== undefined) {
+				vscode.workspace
+					.getConfiguration()
+					.update("42header.username", username, true);
+			}
+		});
+
+	vscode.window
+		.showInputBox({
+			prompt: "Enter your email address (optional)",
+			placeHolder: "user@student.42.fr",
+		})
+		.then((email) => {
+			if (email !== undefined) {
+				vscode.workspace
+					.getConfiguration()
+					.update("42header.email", email, true);
+			}
+		});
+
+	vscode.window
+		.showInputBox({
+			prompt: "Enter the custom domain (optional)",
+			placeHolder: ".fr",
+		})
+		.then((customDomain) => {
+			if (customDomain !== undefined) {
+				vscode.workspace
+					.getConfiguration()
+					.update("42header.customDomain", customDomain, true);
+			}
+		});
+
 	let disposableInsert = vscode.commands.registerCommand(
 		"42-header.insertComments",
 		function () {
@@ -37,33 +77,6 @@ function activate(context) {
 		}
 	);
 	context.subscriptions.push(disposableChange);
-
-	// Prompt user for username and email after extension activation
-	vscode.window
-		.showInputBox({
-			prompt: "Enter your username (optional)",
-			placeHolder: "user",
-		})
-		.then((username) => {
-			if (username !== undefined) {
-				vscode.workspace
-					.getConfiguration()
-					.update("42header.username", username, true);
-			}
-		});
-
-	vscode.window
-		.showInputBox({
-			prompt: "Enter your email address (optional)",
-			placeHolder: "user@student.42.fr",
-		})
-		.then((email) => {
-			if (email !== undefined) {
-				vscode.workspace
-					.getConfiguration()
-					.update("42header.email", email, true);
-			}
-		});
 }
 
 function insertComments() {
@@ -96,14 +109,31 @@ function insertComments() {
 		vscode.workspace.getConfiguration().get("42header.email") ||
 		`${username}@student.42.fr`;
 
-	// Calculate padding based on dynamic data
-	const fileNamePadding = calculatePadding(fileName, 43);
+	// Calculate padding for the username and email based on the maximum possible lengths
 	const usernamePadding = calculatePadding(username, 8);
-	const emailPadding = calculatePadding(userEmail, 31); // Assuming maximum email length
+	const emailPadding = calculatePadding(userEmail, 28);
 
-	// Calculate padding for Created and Updated lines
-	const createdPadding = calculatePadding(username, 17);
-	const updatedPadding = calculatePadding(username, 16);
+	// Combine username and email for padding calculation
+	const combinedUsernameEmail = `${username} <${userEmail}>`;
+
+	// Calculate padding for the combined username and email
+	const combinedPadding = calculatePadding(combinedUsernameEmail, 28);
+
+	// Get the custom domain or use ".fr" as default
+	let customDomain =
+		vscode.workspace.getConfiguration().get("42header.customDomain") ||
+		".fr";
+
+	// Enforce a maximum of 8 characters for the custom domain extension
+	if (customDomain.length > 8) {
+		customDomain = customDomain.slice(0, 8);
+	}
+
+	// Calculate additional spaces based on the length of the custom domain
+	const customDomainSpaces = " ".repeat(8 - customDomain.length);
+
+	// Calculate padding for the following line
+	const followingLinePadding = calculatePadding(combinedUsernameEmail, 41);
 
 	editor.edit((editBuilder) => {
 		editBuilder.insert(
@@ -111,12 +141,21 @@ function insertComments() {
 			`/* ************************************************************************** */\n` +
 				`/*                                                                            */\n` +
 				`/*                                                        :::      ::::::::   */\n` +
-				`/*   ${fileName}${fileNamePadding}        :+:      :+:    :+:   */\n` +
+				`/*   ${fileName}${calculatePadding(
+					fileName,
+					43
+				)}        :+:      :+:    :+:   */\n` +
 				`/*                                                    +:+ +:+         +:+     */\n` +
-				`/*   By: ${username} <${userEmail}>${usernamePadding}${emailPadding} +#+  +:+       +#+        */\n` +
+				`/*   By: ${username} <${userEmail}> ${followingLinePadding} #+#  +:+       +#+        */\n` +
 				`/*                                                +#+#+#+#+#+   +#+           */\n` +
-				`/*   Created: ${currentDate} by ${username}${createdPadding} #+#    #+#             */\n` +
-				`/*   Updated: ${currentDate} by ${username}${updatedPadding} ###   ########.fr       */\n` +
+				`/*   Created: ${currentDate} by ${username}${calculatePadding(
+					username,
+					17
+				)} #+#    #+#             */\n` +
+				`/*   Updated: ${currentDate} by ${username}${calculatePadding(
+					username,
+					16
+				)} ###   ########${customDomain}${customDomainSpaces}  */\n` +
 				`/*                                                                            */\n` +
 				`/* ************************************************************************** */\n`
 		);
@@ -155,7 +194,7 @@ function updateUpdatedDate() {
 					updatedPosition,
 					updatedPosition.translate(0, updatedLine.length)
 				),
-				`/*   Updated: ${currentDate} by ${username}${usernamePadding} ###   ########.fr       */`
+				`/*   Updated: ${currentDate} by ${username}${usernamePadding} ###   ########${customDomain}       */`
 			);
 		});
 	}

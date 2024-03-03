@@ -1,9 +1,9 @@
 {
 	"name": "42-header",
-	"displayName": "42-header",
+	"displayName": "42 Header - Universal",
 	"description": "A standard 42 header that is required at the beginning of every source code you will write. \t",
 	"publisher": "junsantilla",
-	"version": "0.0.5",
+	"version": "0.1.0",
 	"icon": "42.png",
 	"engines": {
 		"vscode": "^1.86.0"
@@ -27,7 +27,25 @@
 				"mac": "cmd+alt+h",
 				"when": "editorTextFocus"
 			}
-		]
+		],
+		"configuration": {
+			"title": "42-header",
+			"properties": {
+				"42header.username": {
+					"type": "string",
+					"default": ""
+				},
+				"42header.email": {
+					"type": "string",
+					"default": ""
+				},
+				"42header.customDomain": {
+					"type": "string",
+					"default": ".fr",
+					"description": "Custom domain for the 42-header extension"
+				}
+			}
+		}
 	},
 	"scripts": {
 		"lint": "eslint .",

@@ -6,4 +6,10 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
-- Initial release
+-   Initial release
+
+## [0.1.0] - 2024-03-04
+
+### Added
+
+-   Customizable settings for modifying username, email, and custom domain.
