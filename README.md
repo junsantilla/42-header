@@ -1,4 +1,4 @@
-# 42 Header - Universal
+# 42 Header
 
 ## Description
 
@@ -6,7 +6,7 @@ A standard 42 header that is required at the beginning of every source code you 
 
 ## Version
 
-Current version: 0.1.0
+Current version: 0.1.1
 
 ## Compatibility
 
